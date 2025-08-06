@@ -24,9 +24,9 @@ export default function App() {
   const filteredCars = useFilterCars(carsData, searchTerm, sortOption, filters);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col text-gray-800">
+    <div className="min-h-screen w-full bg-white flex flex-col text-gray-800">
       <Navbar />
-      <main className="flex flex-1 p-4 mt-18">
+      <main className="flex flex-1 sm:p-4 mt-18">
         <FilterSidebar
           filters={filters}
           setFilters={setFilters}

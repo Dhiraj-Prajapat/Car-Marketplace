@@ -11,7 +11,8 @@ const Footer = () => {
         backgroundPosition: "bottom",
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 grid grid-flow-col gap-8 pb-10">
+      {/* Main Grid */}
+      <div className="w-full max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-10">
         {/* 1. Logo + Description */}
         <div className="space-y-4">
           <img src="/red-car-logo.avif" alt="Logo" className="h-10 w-auto" />
@@ -30,8 +31,9 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="space-y-4 grid  grid-flow-col-dense space-x-6">
-          {/* 2. Pages */}
+        {/* 2 & 3. Pages + Legal */}
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-6">
+          {/* Pages */}
           <div>
             <h4 className="font-semibold text-red-600 mb-2">Pages</h4>
             <ul className="space-y-1 text-sm">
@@ -50,7 +52,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* 3. Legal */}
+          {/* Legal */}
           <div>
             <h4 className="font-semibold text-red-600 mb-2">Legal</h4>
             <ul className="space-y-1 text-sm">
@@ -62,34 +64,30 @@ const Footer = () => {
               </a>
             </ul>
           </div>
+        </div>
 
-          {/* 4. Contact */}
-          <div>
-            <h4 className="font-semibold text-red-600 mb-2">Contact</h4>
-            <div className="flex items-center gap-2 text-sm mb-1">
-              <Phone className="w-4 h-4 text-red-600" />
-              <span className="whitespace-nowrap">
-                <a href="tel:+919876543210" className="hover:underline">
-                  +91-9876543210
-                </a>
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Mail className="w-4 h-4 text-red-600" />
-              <span className="whitespace-nowrap">
-                <a
-                  href="mailto:contact@motorcompany.com"
-                  className="hover:underline"
-                >
-                  contact@motorcompany.com
-                </a>
-              </span>
-            </div>
+        {/* 4. Contact */}
+        <div className="space-y-2">
+          <h4 className="font-semibold text-red-600 mb-2">Contact</h4>
+          <div className="flex items-center gap-2 text-sm">
+            <Phone className="w-4 h-4 text-red-600" />
+            <a href="tel:+919876543210" className="hover:underline">
+              +91-9876543210
+            </a>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <Mail className="w-4 h-4 text-red-600" />
+            <a
+              href="mailto:contact@motorcompany.com"
+              className="hover:underline"
+            >
+              contact@motorcompany.com
+            </a>
           </div>
         </div>
 
         {/* 5. Newsletter */}
-        <div className="pl-15">
+        <div>
           <h4 className="font-semibold text-red-600 mb-2">
             Subscribe for our Newsletter
           </h4>
@@ -98,14 +96,14 @@ const Footer = () => {
             placeholder="Enter your Email"
             className="w-full p-2 border rounded-md text-sm mb-2"
           />
-          <button className="w-auto bg-red-600 text-white py-2 px-8 rounded hover:bg-red-700 transition">
+          <button className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition">
             Subscribe
           </button>
         </div>
       </div>
 
       {/* Bottom Strip */}
-      <div className="text-xs text-center md:text-left text-gray-600 flex flex-col md:flex-row justify-between items-center px-4 pb-10 max-w-7xl mx-auto">
+      <div className="text-xs text-center md:text-left text-gray-600 flex flex-col md:flex-row justify-between items-center px-4 pb-10 max-w-7xl mx-auto gap-2">
         <p>© Copyright 2025 | All Rights Reserved</p>
         <p>Develop by Dhiraj Prajapat</p>
       </div>
