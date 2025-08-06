@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ChevronDown,
   ChevronUp,
@@ -7,9 +7,9 @@ import {
   MapPin,
   Calendar,
   Settings,
+  SlidersHorizontal,
+  X,
 } from "lucide-react";
-
-import { useState } from "react";
 
 export default function FilterSidebar({
   filters,
@@ -18,18 +18,7 @@ export default function FilterSidebar({
   setSelectedLocation,
   carsData,
 }) {
-  // Count helper function
-  const getCount = (type, value) => {
-    return carsData.filter((car) => {
-      if (type === "brand") return car.brand === value;
-      if (type === "fuel") return car.fuelTypes === value;
-      if (type === "transmission") return car.transmission === value;
-      if (type === "body") return car.body === value;
-      if (type === "location") return car.location === value;
-      return false;
-    }).length;
-  };
-
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
     brand: true,
     location: true,
@@ -56,6 +45,17 @@ export default function FilterSidebar({
     });
   };
 
+  const getCount = (type, value) => {
+    return carsData.filter((car) => {
+      if (type === "brand") return car.brand === value;
+      if (type === "fuel") return car.fuelTypes === value;
+      if (type === "transmission") return car.transmission === value;
+      if (type === "body") return car.body === value;
+      if (type === "location") return car.location === value;
+      return false;
+    }).length;
+  };
+
   const renderCheckbox = (type, value, label) => (
     <label
       key={value}
@@ -75,237 +75,168 @@ export default function FilterSidebar({
   );
 
   return (
-    <aside className="w-80 bg-white rounded-lg p-4 shadow-md overflow-y-auto max-h-[calc(100vh-100px)] sticky top-22 left-0 scrollbar-thin">
-      {/* --- Price Range --- */}
-      <div className="mb-6">
-        <h2 className="text-md font-semibold mb-2">Price Range</h2>
-        <div className="text-sm flex justify-between mb-1">
-          <span>₹ {filters.priceRange[0].toLocaleString()}</span>
-          <span>₹ {filters.priceRange[1].toLocaleString()}</span>
-        </div>
-        <input
-          type="range"
-          min={0}
-          max={5000000}
-          step={10000}
-          value={filters.priceRange[1]}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              priceRange: [filters.priceRange[0], Number(e.target.value)],
-            })
-          }
-          className="w-full accent-red-500"
+    <>
+      {/* === Mobile Toggle Button === */}
+      <div className="md:hidden fixed top-15 right-4 z-40">
+        <button
+          onClick={() => setIsMobileSidebarOpen(true)}
+          className="flex items-center gap-1 bg-red-600 text-white px-4 py-2 rounded-md shadow-md"
+        >
+          <SlidersHorizontal size={16} />
+          Filters
+        </button>
+      </div>
+
+      {/* === Backdrop Overlay === */}
+      {isMobileSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsMobileSidebarOpen(false)}
         />
-      </div>
+      )}
 
-      {/* --- Brand + Models --- */}
-      <div className="mb-6 border-t pt-4">
-        <div
-          className="flex justify-between items-center cursor-pointer mb-2"
-          onClick={() => toggleSection("brand")}
-        >
-          <h2 className="text-md font-semibold">Brand + Models</h2>
-          {expandedSections.brand ? (
-            <ChevronUp size={16} />
-          ) : (
-            <ChevronDown size={16} />
+      {/* === Sidebar Container === */}
+      <aside
+        className={`bg-white w-80 p-4 shadow-lg rounded-lg z-50 max-h-[calc(100vh-100px)] overflow-y-auto scrollbar-thin fixed md:sticky top-24 left-0 transition-transform duration-300 transform ${
+          isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0`}
+      >
+        {/* === Close Button on Mobile === */}
+        <div className="md:hidden flex justify-end mb-2">
+          <button
+            onClick={() => setIsMobileSidebarOpen(false)}
+            className="text-red-600"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* === Price Range === */}
+        <div className="mb-6">
+          <h2 className="text-md font-semibold mb-2">Price Range</h2>
+          <div className="text-sm flex justify-between mb-1">
+            <span>₹ {filters.priceRange[0].toLocaleString()}</span>
+            <span>₹ {filters.priceRange[1].toLocaleString()}</span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={5000000}
+            step={10000}
+            value={filters.priceRange[1]}
+            onChange={(e) =>
+              setFilters({
+                ...filters,
+                priceRange: [filters.priceRange[0], Number(e.target.value)],
+              })
+            }
+            className="w-full accent-red-500"
+          />
+        </div>
+
+        {/* === Brand Section === */}
+        <div className="mb-6">
+          <div
+            className="flex items-center justify-between mb-2 cursor-pointer"
+            onClick={() => toggleSection("brand")}
+          >
+            <h2 className="text-md font-semibold flex items-center gap-2">
+              <CarFront size={18} /> Brand
+            </h2>
+            {expandedSections.brand ? <ChevronUp /> : <ChevronDown />}
+          </div>
+          {expandedSections.brand && (
+            <div className="space-y-1">
+              {Array.from(new Set(carsData.map((car) => car.brand))).map(
+                (brand) =>
+                  renderCheckbox("brand", brand, brand.charAt(0).toUpperCase() + brand.slice(1))
+              )}
+            </div>
           )}
         </div>
 
-        {expandedSections.brand && (
-          <div className="space-y-1">
-            <input
-              type="text"
-              placeholder="Search for Car Brands, Model.."
-              className="w-full text-sm px-2 py-1 border rounded-md focus:outline-none focus:ring focus:ring-red-100 mb-2"
-            />
-            {[
-              "Maruti Suzuki",
-              "Hyundai",
-              "Honda",
-              "Tata",
-              "Renault",
-              "Kia",
-              "Ford",
-              "Mahindra",
-            ].map((brand) => renderCheckbox("brand", brand, brand))}
+        {/* === Location Section === */}
+        <div className="mb-6">
+          <div
+            className="flex items-center justify-between mb-2 cursor-pointer"
+            onClick={() => toggleSection("location")}
+          >
+            <h2 className="text-md font-semibold flex items-center gap-2">
+              <MapPin size={18} /> Location
+            </h2>
+            {expandedSections.location ? <ChevronUp /> : <ChevronDown />}
           </div>
-        )}
-      </div>
-
-      {/* --- Model Year --- */}
-      <div className="mb-6 border-t pt-4">
-        <h2 className="text-md font-semibold mb-2">Model Year</h2>
-        <div className="text-sm flex justify-between mb-1">
-          <span>{filters.yearRange[0]}</span>
-          <span>{filters.yearRange[1]}</span>
-        </div>
-        <input
-          type="range"
-          min={2000}
-          max={2025}
-          step={1}
-          value={filters.yearRange[1]}
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              yearRange: [filters.yearRange[0], Number(e.target.value)],
-            })
-          }
-          className="w-full accent-red-500"
-        />
-      </div>
-
-      {/* --- Location --- */}
-      <div className="mb-6 border-t pt-4">
-        <div
-          className="flex justify-between items-center cursor-pointer mb-2"
-          onClick={() => toggleSection("location")}
-        >
-          <h2 className="text-md font-semibold">Location</h2>
-          {expandedSections.location ? (
-            <ChevronUp size={16} />
-          ) : (
-            <ChevronDown size={16} />
-          )}
-        </div>
-        {expandedSections.location && (
-          <div className="space-y-1">
-            {[
-              "Maharashtra",
-              "Ahmednagar",
-              "Akola",
-              "Amravati",
-              "Aurangabad",
-              "Beed",
-              "Bhandara",
-              "Buldhana",
-            ].map((loc) => (
-              <label
-                key={loc}
-                className="flex items-center space-x-2 cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedLocation === loc}
-                  onChange={() => setSelectedLocation(loc)}
-                  className="form-checkbox h-4 w-4"
-                />
-                <span className="text-sm">{loc}</span>
-              </label>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* --- Body Type --- */}
-      <div className="mb-6 border-t pt-4">
-        <div
-          className="flex justify-between items-center cursor-pointer mb-2"
-          onClick={() => toggleSection("body")}
-        >
-          <h2 className="text-md font-semibold">Body Type</h2>
-          {expandedSections.body ? (
-            <ChevronUp size={16} />
-          ) : (
-            <ChevronDown size={16} />
-          )}
-        </div>
-        {expandedSections.body && (
-          <div className="space-y-1">
-            {["SUV", "Hatchback", "Sedan", "MUV"].map((type) => {
-              const count = carsData.filter(
-                (car) => car.bodyType?.toLowerCase() === type.toLowerCase()
-              ).length;
-
-              return (
-                <label
-                  key={type}
-                  className="flex items-center justify-between px-2 py-1 cursor-pointer hover:bg-red-50"
-                >
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.body.includes(type)}
-                      onChange={() => toggleFilter("body", type)}
-                      className="accent-red-500 w-4 h-4"
-                    />
-                    <CarFront size={16} className="text-red-500" />
-                    <span className="text-sm">{type}</span>
-                  </div>
-                  <span className="text-sm text-gray-500">{count}</span>
-                </label>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* --- Fuel Type --- */}
-      <div className="mb-6 border-t pt-4">
-        <div
-          className="flex justify-between items-center cursor-pointer mb-2"
-          onClick={() => toggleSection("fuel")}
-        >
-          <h2 className="text-md font-semibold">Fuel Type</h2>
-          {expandedSections.fuel ? (
-            <ChevronUp size={16} />
-          ) : (
-            <ChevronDown size={16} />
+          {expandedSections.location && (
+            <div className="space-y-1">
+              {Array.from(new Set(carsData.map((car) => car.location))).map(
+                (location) =>
+                  renderCheckbox("location", location, location)
+              )}
+            </div>
           )}
         </div>
 
-        {expandedSections.fuel && (
-          <div className="space-y-1">
-            {["Petrol", "Diesel", "CNG", "Electric"].map((fuel) => {
-              const count = carsData.filter(
-                (car) => car.fuelTypes?.toLowerCase() === fuel.toLowerCase()
-              ).length;
-
-              return (
-                <label
-                  key={fuel}
-                  className="flex items-center justify-between px-2 py-1 cursor-pointer hover:bg-red-50"
-                >
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={filters.fuel.includes(fuel)}
-                      onChange={() => toggleFilter("fuel", fuel)}
-                      className="accent-red-500 w-4 h-4"
-                    />
-                    <span className="text-sm">{fuel}</span>
-                  </div>
-                  <span className="text-sm text-gray-500">{count}</span>
-                </label>
-              );
-            })}
+        {/* === Body Type === */}
+        <div className="mb-6">
+          <div
+            className="flex items-center justify-between mb-2 cursor-pointer"
+            onClick={() => toggleSection("body")}
+          >
+            <h2 className="text-md font-semibold flex items-center gap-2">
+              <Calendar size={18} /> Body Type
+            </h2>
+            {expandedSections.body ? <ChevronUp /> : <ChevronDown />}
           </div>
-        )}
-      </div>
-
-      {/* --- Transmission --- */}
-      <div className="mb-6 border-t pt-4">
-        <div
-          className="flex justify-between items-center cursor-pointer mb-2"
-          onClick={() => toggleSection("transmission")}
-        >
-          <h2 className="text-md font-semibold">Fuel Type</h2>
-          {expandedSections.transmission ? (
-            <ChevronUp size={16} />
-          ) : (
-            <ChevronDown size={16} />
+          {expandedSections.body && (
+            <div className="space-y-1">
+              {Array.from(new Set(carsData.map((car) => car.body))).map((body) =>
+                renderCheckbox("body", body, body)
+              )}
+            </div>
           )}
         </div>
-        {expandedSections.transmission && (
-          <div className="space-y-1">
-            {["Manual", "Automatic"].map((trans) =>
-              renderCheckbox("transmission", trans, trans)
-            )}
+
+        {/* === Fuel Type === */}
+        <div className="mb-6">
+          <div
+            className="flex items-center justify-between mb-2 cursor-pointer"
+            onClick={() => toggleSection("fuel")}
+          >
+            <h2 className="text-md font-semibold flex items-center gap-2">
+              <Fuel size={18} /> Fuel Type
+            </h2>
+            {expandedSections.fuel ? <ChevronUp /> : <ChevronDown />}
           </div>
-        )}
-      </div>
-    </aside>
+          {expandedSections.fuel && (
+            <div className="space-y-1">
+              {Array.from(new Set(carsData.map((car) => car.fuelTypes))).map(
+                (fuel) => renderCheckbox("fuel", fuel, fuel)
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* === Transmission === */}
+        <div className="mb-6">
+          <div
+            className="flex items-center justify-between mb-2 cursor-pointer"
+            onClick={() => toggleSection("transmission")}
+          >
+            <h2 className="text-md font-semibold flex items-center gap-2">
+              <Settings size={18} /> Transmission
+            </h2>
+            {expandedSections.transmission ? <ChevronUp /> : <ChevronDown />}
+          </div>
+          {expandedSections.transmission && (
+            <div className="space-y-1">
+              {Array.from(new Set(carsData.map((car) => car.transmission))).map(
+                (transmission) =>
+                  renderCheckbox("transmission", transmission, transmission)
+              )}
+            </div>
+          )}
+        </div>
+      </aside>
+    </>
   );
 }
