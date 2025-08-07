@@ -26,7 +26,7 @@ const CarListHeader = ({
             placeholder="Search for Cars, Brands, Model..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full border border-gray-300 rounded-md focus:outline-none py-2 pl-9 pr-2 placeholder:text-gray-500 text-sm"
+            className="w-full border-b border-gray-300 rounded-md focus:outline-none py-2 pl-9 pr-2 placeholder:text-gray-500 text-sm"
           />
           <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
             <SearchIcon className="h-5 w-5" />
