@@ -8,7 +8,7 @@ const Navbar = () => {
     <nav className="w-full bg-white shadow-md fixed top-0 left-0 z-50">
       <div className="w-full max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col items-center">
           <img src="/red-car-logo.avif" alt="Logo" className="h-10 w-10" />
           <span className="text-red-600 font-bold tracking-wide text-sm hidden md:block">
             MOTOR COMPANY
@@ -16,7 +16,7 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Nav Links (hidden on small screens) */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-6 w-[37%]">
           <a href="#" className="text-red-600 font-medium border-b-2 border-red-600 pb-1">
             Home
           </a>
